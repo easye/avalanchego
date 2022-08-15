@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"syscall"
 
+	"go.uber.org/zap"
+
 	"github.com/ava-labs/avalanchego/utils/logging"
 )
 
@@ -32,7 +34,7 @@ func Set(max uint64, log logging.Logger) error {
 	}
 
 	if bsdMax > rLimit.Max {
-		return fmt.Errorf("error fd-limit: (%d) greater than max: (%d)", limit, rLimit.Max)
+		return fmt.Errorf("error fd-limit: (%d) greater than max: (%d)", bsdMax, rLimit.Max)
 	}
 
 	rLimit.Cur = bsdMax
@@ -49,7 +51,7 @@ func Set(max uint64, log logging.Logger) error {
 
 	if rLimit.Cur < DefaultFDLimit {
 		log.Warn("fd-limit is less than recommended and could result in reduced performance",
-			zap.Uint64("currentLimit", rLimit.Cur),
+			zap.Int64("currentLimit", rLimit.Cur),
 			zap.Uint64("recommendedLimit", DefaultFDLimit),
 		)
 	}
